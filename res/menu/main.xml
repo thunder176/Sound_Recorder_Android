@@ -1,11 +1,29 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.example.soundrecordergroup1.MainActivity" >
+    tools:context="edu.bjtu.group1.SoundRecorder.MainActivity" >
 
+    <!-- only for testing -->
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/action_settings"/>
+        android:id="@+id/action_example"
+        android:showAsAction="withText|ifRoom"
+        android:title="@string/action_example"/>
+    <!-- Tutorial, should appear as action button -->
+    <item
+        android:id="@+id/action_tutorial"
+        android:icon="@drawable/ic_action_tutorial"
+        android:showAsAction="always"
+        android:title="@string/action_tutorial"/>
+
+    <!-- Capture, should appear as action button -->
+    <item
+        android:id="@+id/action_capture"
+        android:showAsAction="always"
+        android:title="@string/action_capture"/>
+
+    <!-- Review, should appear as action button -->
+    <item
+        android:id="@+id/action_review"
+        android:showAsAction="always"
+        android:title="@string/action_review"/>
 
 </menu>

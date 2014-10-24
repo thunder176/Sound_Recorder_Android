@@ -1,11 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.soundrecordergroup1"
+    package="edu.bjtu.group1.SoundRecorder"
     android:versionCode="1"
     android:versionName="1.0" >
 
+    <!-- add permissions that needed -->
+    <!-- 联网权限 -->  
+    <uses-permission android:name="android.permission.INTERNET" />  
+    <!-- 往SDCard读写数据权限 -->  
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />  
+    <!-- 录音权限 -->  
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />  
+    <!-- 在SDCard中创建与删除文件权限 -->  
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />  
+    <!-- Wake lock权限 -->  
+    <uses-permission android:name = "android.permission.WAKE_LOCK" />
+
     <uses-sdk
-        android:minSdkVersion="16"
+        android:minSdkVersion="14"
         android:targetSdkVersion="21" />
 
     <application

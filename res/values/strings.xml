@@ -2,7 +2,25 @@
 <resources>
 
     <string name="app_name">SoundRecorderGroup1</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="title_section1">Settings</string>
+    <string name="title_section2">Tutorial</string>
+    <string name="title_section3">Feedback</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_example">Example action</string>
     <string name="action_settings">Settings</string>
+    <string name="action_tutorial">Tutorial</string>
+    <string name="action_capture">  CAPTURE  </string>
+    <string name="action_review">  REVIEW  </string>
+    <string name="capture_intro_message">
+        <![CDATA[
+        
+            Capture & review the important moments
+            of conversations, meetings and lectures
+        
+        ]]>
+    </string>
+    <string name="button_capture">ON</string>
+    <string name="capture_tips">Recording</string>
 
 </resources>
