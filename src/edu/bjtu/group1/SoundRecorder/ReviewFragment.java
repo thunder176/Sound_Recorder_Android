@@ -63,18 +63,20 @@ public class ReviewFragment extends Fragment {
 					long arg3) {
 				String strFileName = (String) mlv_review
 						.getItemAtPosition(arg2);
-//				Toast.makeText(getActivity(), strFileName, Toast.LENGTH_SHORT)
-//						.show();
+				// Toast.makeText(getActivity(), strFileName,
+				// Toast.LENGTH_SHORT)
+				// .show();
 				MediaReview.getInstance().playRecordFileByName(strFileName);
 			}
 		});
 
 		return rootView;
 	}
-	
+
 	@Override
-	public void onStop(){
+	public void onStop() {
 		MediaReview.getInstance().stopPlay();
+		super.onStop();
 	}
 
 	private String[] loadRecorderFiles() {
