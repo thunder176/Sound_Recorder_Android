@@ -6,6 +6,7 @@ import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -49,6 +50,30 @@ public class MainActivity extends Activity implements
 		fragmentManager.beginTransaction()
 				.replace(R.id.container, CaptureFragment.getInstance())
 				.commit();
+	}
+	
+	@Override
+	protected void onResume() {
+		Log.e("Activity_lifecircle_testing", "MainActivity_onResume");
+		super.onResume();
+	}
+	
+	@Override
+	protected void onStart() {
+		Log.e("Activity_lifecircle_testing", "MainActivity_onStart");
+		super.onStart();
+	}
+
+	@Override
+	public void onPause() {
+		Log.e("Activity_lifecircle_testing", "MainActivity_onPause");
+		super.onPause();
+	}
+
+	@Override
+	protected void onStop() {
+		Log.e("Activity_lifecircle_testing", "MainActivity_onStop");
+		super.onStop();
 	}
 
 	public void onNavigationDrawerItemSelected(int position) {

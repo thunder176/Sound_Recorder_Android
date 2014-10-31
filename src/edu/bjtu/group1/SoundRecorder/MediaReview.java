@@ -1,11 +1,11 @@
 package edu.bjtu.group1.SoundRecorder;
 
-import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnErrorListener;
-import android.os.Environment;
 import android.util.Log;
 
 public class MediaReview implements MediaPlayer.OnPreparedListener {
@@ -29,8 +29,9 @@ public class MediaReview implements MediaPlayer.OnPreparedListener {
 		return mMediaReview;
 	}
 
-	public void playRecordFileByName(String fileName) {
-		String path = getRecordStorageDir() + File.separator + fileName;
+	public void playRecordByFileName(String fileName) {
+		String path = SaveOrLoadFileHelper.getInstance()
+				.getRecordDirByFileName(fileName);
 		try {
 			if (null == mMediaPlayer) {
 				mMediaPlayer = new MediaPlayer();
@@ -41,16 +42,16 @@ public class MediaReview implements MediaPlayer.OnPreparedListener {
 			mMediaPlayer.setDataSource(path);
 			mMediaPlayer.setOnPreparedListener(this);
 			mMediaPlayer.setOnErrorListener(new OnErrorListener() {
-				 
-				 public boolean onError(MediaPlayer mp, int what, int extra) {
-				 // 发生错误，停止录制
-					 mMediaPlayer.stop();
-					 mMediaPlayer.release();
-					 mMediaPlayer = null;
-					 Log.e("MediaPlayer_setOnErrorListener", "ERROR HAPPENED");
-					 return false;
-				 }
-				 });
+
+				public boolean onError(MediaPlayer mp, int what, int extra) {
+					// 发生错误，停止播放
+					mMediaPlayer.stop();
+					mMediaPlayer.release();
+					mMediaPlayer = null;
+					Log.e("MediaPlayer_setOnErrorListener", "ERROR HAPPENED");
+					return false;
+				}
+			});
 			mMediaPlayer.prepareAsync();
 		} catch (IllegalArgumentException e) {
 			Log.e("PLAYRECORD_IllegalArgumentException", e.getMessage());
@@ -63,20 +64,52 @@ public class MediaReview implements MediaPlayer.OnPreparedListener {
 		}
 	}
 
-	private String getRecordStorageDir() {
-		String path = Environment.getExternalStoragePublicDirectory(
-				Environment.DIRECTORY_MUSIC).getAbsolutePath();
-		Log.e("RECORD_DIR", path);
-		return path;
+	public String getDurationByFileName(String fileName) {
+		String path = SaveOrLoadFileHelper.getInstance()
+				.getRecordDirByFileName(fileName);
+		if (null == mMediaPlayer) {
+			mMediaPlayer = new MediaPlayer();
+		} else {
+			stopPlay();
+			mMediaPlayer = new MediaPlayer();
+		}
+		try {
+			mMediaPlayer.setDataSource(path);
+			mMediaPlayer.prepare();
+		} catch (IllegalArgumentException e) {
+			Log.e("PLAYRECORD_IllegalArgumentException", e.getMessage());
+		} catch (SecurityException e) {
+			Log.e("PLAYRECORD_SecurityException", e.getMessage());
+		} catch (IllegalStateException e) {
+			Log.e("PLAYRECORD_IllegalStateException", e.getMessage());
+		} catch (IOException e) {
+			Log.e("PLAYRECORD_IOException", e.getMessage());
+		}
+
+		int iDuration = mMediaPlayer.getDuration();
+		if (-1 != iDuration) {
+			// String strDuration = new SimpleDateFormat("hh:mm:ss")
+			// .format(new Date(iDuration));
+			// Log.e("MediaReview::getDurationByFileName", strDuration);
+			int hours = (iDuration % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60);
+			int minutes = (iDuration % (1000 * 60 * 60)) / (1000 * 60);
+			int seconds = (iDuration % (1000 * 60)) / 1000;
+			String strDuration = hours + ":" + minutes + ":" + seconds;
+			return strDuration;
+		}
+		return "";
 	}
 
 	public void onPrepared(MediaPlayer arg0) {
-		mMediaPlayer.start();		
+		mMediaPlayer.start();
 	}
-	
+
 	public void stopPlay() {
-		mMediaPlayer.stop();
-		mMediaPlayer.release();
-		mMediaPlayer = null;
+		if (mMediaPlayer != null) {
+			mMediaPlayer.stop();
+			mMediaPlayer.release();
+			mMediaPlayer = null;
+		}
 	}
+
 }

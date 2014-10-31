@@ -4,10 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 
-import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.media.MediaRecorder.OnErrorListener;
-import android.os.Environment;
 import android.util.Log;
 
 public class MediaCapture {
@@ -39,15 +37,15 @@ public class MediaCapture {
 		mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 
 		// Before Save a File on External Storage
-		if (!isExternalStorageReadable()) {
+		if (!SaveOrLoadFileHelper.getInstance().isExternalStorageReadable()) {
 			return -1;
 		}
 
 		SimpleDateFormat sDateFormat = new SimpleDateFormat(
 				"yyyy-MM-dd hh_mm_ss");
 		String date = sDateFormat.format(new java.util.Date());
-		mRecorder.setOutputFile(getRecordStorageDir() + File.separator + date
-				+ ".amr");
+		mRecorder.setOutputFile(SaveOrLoadFileHelper.getInstance()
+				.getRecordStorageDir() + File.separator + date + ".amr");
 
 		try {
 			mRecorder.prepare();
@@ -75,22 +73,6 @@ public class MediaCapture {
 		mRecorder.stop();
 		mRecorder.release();
 		mRecorder = null;
-	}
-
-	private boolean isExternalStorageReadable() {
-		String state = Environment.getExternalStorageState();
-		if (Environment.MEDIA_MOUNTED.equals(state)
-				|| Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
-			return true;
-		}
-		return false;
-	}
-
-	private String getRecordStorageDir() {
-		String path = Environment.getExternalStoragePublicDirectory(
-				Environment.DIRECTORY_MUSIC).getAbsolutePath();
-		Log.e("RECORD_DIR", path);
-		return path;
 	}
 
 }

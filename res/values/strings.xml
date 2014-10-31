@@ -21,6 +21,10 @@
         ]]>
     </string>
     <string name="button_capture">ON</string>
+    <string name="capture_tips_not_recording"></string>
     <string name="capture_tips">Recording</string>
-
+    <string name="review_context_menu_title">You can choose what you want to do:</string>
+    <string name="review_context_menu_rename">Rename this Record</string>
+    <string name="review_context_menu_delete">Delete this Record</string>
+    
 </resources>

@@ -2,6 +2,7 @@ package edu.bjtu.group1.SoundRecorder;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,4 +82,27 @@ public class CaptureFragment extends Fragment {
 		return rootView;
 	}
 
+	@Override
+	public void onResume() {
+		Log.e("Fragment_lifecircle_testing", "CaptureFragment_onResume");
+		super.onResume();
+	}
+	
+	@Override
+	public void onStart() {
+		Log.e("Fragment_lifecircle_testing", "CaptureFragment_onStart");
+		super.onStart();
+	}
+	
+	@Override
+	public void onPause() {
+		Log.e("Fragment_lifecircle_testing", "CaptureFragment_onPause");
+		super.onPause();
+	}
+	
+	@Override
+	public void onStop() {
+		Log.e("Fragment_lifecircle_testing", "CaptureFragment_onStop");
+		super.onStop();
+	}
 }
