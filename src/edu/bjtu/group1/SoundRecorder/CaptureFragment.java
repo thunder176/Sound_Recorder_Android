@@ -6,7 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,7 +18,7 @@ public class CaptureFragment extends Fragment {
 	 */
 	private static CaptureFragment instance_CaptureFragment = null;
 
-	private Button mbtn_capture = null;
+	private ImageButton mbtn_capture = null;
 	private TextView mtv_captureStatus = null;
 	private boolean mbl_isRecording = false;
 
@@ -43,7 +43,9 @@ public class CaptureFragment extends Fragment {
 			Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_capture, container,
 				false);
-		mbtn_capture = (Button) rootView.findViewById(R.id.button_capture);
+		mbtn_capture = (ImageButton) rootView
+				.findViewById(R.id.image_button_capture);
+		mbtn_capture.setImageResource(R.drawable.capture_start);
 		mtv_captureStatus = (TextView) rootView
 				.findViewById(R.id.textview_capture_status);
 
@@ -56,6 +58,7 @@ public class CaptureFragment extends Fragment {
 
 					// stop recording and release
 					MediaCapture.getInstance().stopRecording();
+					mbtn_capture.setImageResource(R.drawable.capture_start);
 					mtv_captureStatus.setText("");
 					mbl_isRecording = false;
 				} else {
@@ -72,6 +75,8 @@ public class CaptureFragment extends Fragment {
 								Toast.LENGTH_SHORT).show();
 						return;
 					}
+					mbtn_capture
+							.setImageResource(R.drawable.capture_notification);
 					mtv_captureStatus.setText(getActivity().getString(
 							R.string.capture_tips));
 					mbl_isRecording = true;
@@ -87,19 +92,19 @@ public class CaptureFragment extends Fragment {
 		Log.e("Fragment_lifecircle_testing", "CaptureFragment_onResume");
 		super.onResume();
 	}
-	
+
 	@Override
 	public void onStart() {
 		Log.e("Fragment_lifecircle_testing", "CaptureFragment_onStart");
 		super.onStart();
 	}
-	
+
 	@Override
 	public void onPause() {
 		Log.e("Fragment_lifecircle_testing", "CaptureFragment_onPause");
 		super.onPause();
 	}
-	
+
 	@Override
 	public void onStop() {
 		Log.e("Fragment_lifecircle_testing", "CaptureFragment_onStop");

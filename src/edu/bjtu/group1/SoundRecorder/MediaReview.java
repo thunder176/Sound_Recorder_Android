@@ -112,4 +112,14 @@ public class MediaReview implements MediaPlayer.OnPreparedListener {
 		}
 	}
 
+	public boolean deleteRecordByFileName(String strFileName) {
+		return SaveOrLoadFileHelper.getInstance().deleteRecordByFileName(
+				strFileName);
+	}
+
+	public int renameRecordByFileName(String oldName, String newName) {
+		return SaveOrLoadFileHelper.getInstance().renameRecordByFileName(
+				oldName, newName);
+	}
+
 }

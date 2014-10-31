@@ -42,39 +42,45 @@ public final class R {
         public static final int vertical_page_margin=0x7f040009;
     }
     public static final class drawable {
-        public static final int drawer_shadow=0x7f020000;
-        public static final int ic_action_tutorial=0x7f020001;
-        public static final int ic_drawer=0x7f020002;
-        public static final int ic_launcher=0x7f020003;
-        public static final int recording_play=0x7f020004;
+        public static final int capture_notification=0x7f020000;
+        public static final int capture_start=0x7f020001;
+        public static final int drawer_shadow=0x7f020002;
+        public static final int ic_action_microphone=0x7f020003;
+        public static final int ic_action_tutorial=0x7f020004;
+        public static final int ic_drawer=0x7f020005;
+        public static final int ic_launcher=0x7f020006;
+        public static final int recording_play=0x7f020007;
     }
     public static final class id {
-        public static final int RelativeLayout01=0x7f080009;
-        public static final int action_capture=0x7f080010;
-        public static final int action_example=0x7f08000e;
-        public static final int action_review=0x7f080011;
-        public static final int action_settings=0x7f08000d;
-        public static final int action_tutorial=0x7f08000f;
-        public static final int button_capture=0x7f080004;
+        public static final int RelativeLayout01=0x7f08000b;
+        public static final int action_capture=0x7f080012;
+        public static final int action_example=0x7f080010;
+        public static final int action_review=0x7f080013;
+        public static final int action_settings=0x7f08000f;
+        public static final int action_tutorial=0x7f080011;
         public static final int container=0x7f080001;
+        public static final int dialog=0x7f080003;
         public static final int drawer_layout=0x7f080000;
-        public static final int listview_item_duration=0x7f08000c;
-        public static final int listview_item_image=0x7f08000a;
-        public static final int listview_item_title=0x7f08000b;
-        public static final int listview_review=0x7f080008;
+        public static final int edittext_newname=0x7f080004;
+        public static final int image_button_capture=0x7f080006;
+        public static final int listview_item_duration=0x7f08000e;
+        public static final int listview_item_image=0x7f08000c;
+        public static final int listview_item_title=0x7f08000d;
+        public static final int listview_review=0x7f08000a;
         public static final int navigation_drawer=0x7f080002;
-        public static final int searchview_review=0x7f080007;
-        public static final int section_label=0x7f080006;
-        public static final int textview_capture_status=0x7f080005;
-        public static final int textview_capture_tips=0x7f080003;
+        public static final int searchview_review=0x7f080009;
+        public static final int section_label=0x7f080008;
+        public static final int textview_capture_status=0x7f080007;
+        public static final int textview_capture_tips=0x7f080005;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
-        public static final int fragment_capture=0x7f030001;
-        public static final int fragment_main=0x7f030002;
-        public static final int fragment_navigation_drawer=0x7f030003;
-        public static final int fragment_review=0x7f030004;
-        public static final int listview_review_items=0x7f030005;
+        public static final int dialog_rename_record=0x7f030001;
+        public static final int fragment_capture=0x7f030002;
+        public static final int fragment_main=0x7f030003;
+        public static final int fragment_navigation_drawer=0x7f030004;
+        public static final int fragment_review=0x7f030005;
+        public static final int listview_review_items=0x7f030006;
     }
     public static final class menu {
         public static final int global=0x7f070000;
@@ -96,6 +102,14 @@ public final class R {
         public static final int review_context_menu_delete=0x7f050011;
         public static final int review_context_menu_rename=0x7f050010;
         public static final int review_context_menu_title=0x7f05000f;
+        public static final int review_rename_dialog_cancel=0x7f050014;
+        public static final int review_rename_dialog_ok=0x7f050013;
+        public static final int review_rename_dialog_title=0x7f050012;
+        public static final int review_rename_result_file_exist=0x7f050017;
+        public static final int review_rename_result_not_exist=0x7f050016;
+        public static final int review_rename_result_null_name=0x7f050015;
+        public static final int review_rename_result_same_name=0x7f050018;
+        public static final int review_rename_result_success=0x7f050019;
         public static final int title_section1=0x7f050001;
         public static final int title_section2=0x7f050002;
         public static final int title_section3=0x7f050003;

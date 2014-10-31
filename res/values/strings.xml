@@ -13,7 +13,7 @@
     <string name="action_capture">  CAPTURE  </string>
     <string name="action_review">  REVIEW  </string>
     <string name="capture_intro_message">
-        <![CDATA[
+		<![CDATA[
         
             Capture & review the important moments
             of conversations, meetings and lectures
@@ -26,5 +26,13 @@
     <string name="review_context_menu_title">You can choose what you want to do:</string>
     <string name="review_context_menu_rename">Rename this Record</string>
     <string name="review_context_menu_delete">Delete this Record</string>
-    
+    <string name="review_rename_dialog_title">Please input the new Record\'s name:</string>
+    <string name="review_rename_dialog_ok">OK</string>
+    <string name="review_rename_dialog_cancel">Cancel</string>
+    <string name="review_rename_result_null_name">You must input a name.</string>
+    <string name="review_rename_result_not_exist">The Record is not exist now.</string>
+    <string name="review_rename_result_file_exist">The name has been already uesd.</string>
+    <string name="review_rename_result_same_name">You cannot input a same name.</string>
+    <string name="review_rename_result_success">Rename success</string>
+
 </resources>

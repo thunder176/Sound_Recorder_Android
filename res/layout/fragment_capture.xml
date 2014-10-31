@@ -17,8 +17,8 @@
         android:layout_marginTop="@dimen/vertical_page_margin"
         android:text="@string/capture_intro_message" />
 
-    <Button
-        android:id="@+id/button_capture"
+    <ImageButton
+        android:id="@+id/image_button_capture"
         android:layout_width="@dimen/button_capture_size"
         android:layout_height="@dimen/button_capture_size"
         android:layout_gravity="center"
