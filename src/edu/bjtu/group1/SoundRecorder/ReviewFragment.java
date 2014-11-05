@@ -40,7 +40,8 @@ public class ReviewFragment extends Fragment {
 
 	private String mstr_fileName = null;
 
-	private ReviewFragment() {
+	// TODO 自动适应屏幕转换
+	public ReviewFragment() {
 	}
 
 	/**

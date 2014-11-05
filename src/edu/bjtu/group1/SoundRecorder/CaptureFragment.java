@@ -2,10 +2,12 @@ package edu.bjtu.group1.SoundRecorder;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Chronometer;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,9 +22,12 @@ public class CaptureFragment extends Fragment {
 
 	private ImageButton mbtn_capture = null;
 	private TextView mtv_captureStatus = null;
+	private Chronometer mTimer = null;
+
 	private boolean mbl_isRecording = false;
 
-	private CaptureFragment() {
+	// TODO 自动适应屏幕转换
+	public CaptureFragment() {
 	}
 
 	/**
@@ -48,6 +53,8 @@ public class CaptureFragment extends Fragment {
 		mbtn_capture.setImageResource(R.drawable.capture_start);
 		mtv_captureStatus = (TextView) rootView
 				.findViewById(R.id.textview_capture_status);
+		mTimer = (Chronometer) rootView.findViewById(R.id.chronometer_capture);
+		mTimer.setBase(SystemClock.elapsedRealtime());
 
 		mbtn_capture.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
@@ -60,6 +67,8 @@ public class CaptureFragment extends Fragment {
 					MediaCapture.getInstance().stopRecording();
 					mbtn_capture.setImageResource(R.drawable.capture_start);
 					mtv_captureStatus.setText("");
+					mTimer.stop();
+					mTimer.setBase(SystemClock.elapsedRealtime());
 					mbl_isRecording = false;
 				} else {
 
@@ -79,6 +88,8 @@ public class CaptureFragment extends Fragment {
 							.setImageResource(R.drawable.capture_notification);
 					mtv_captureStatus.setText(getActivity().getString(
 							R.string.capture_tips));
+					mTimer.setBase(SystemClock.elapsedRealtime());
+					mTimer.start();
 					mbl_isRecording = true;
 				}
 			}

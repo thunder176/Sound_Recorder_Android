@@ -52,24 +52,25 @@ public final class R {
         public static final int recording_play=0x7f020007;
     }
     public static final class id {
-        public static final int RelativeLayout01=0x7f08000b;
-        public static final int action_capture=0x7f080012;
-        public static final int action_example=0x7f080010;
-        public static final int action_review=0x7f080013;
-        public static final int action_settings=0x7f08000f;
-        public static final int action_tutorial=0x7f080011;
+        public static final int RelativeLayout01=0x7f08000c;
+        public static final int action_capture=0x7f080013;
+        public static final int action_example=0x7f080011;
+        public static final int action_review=0x7f080014;
+        public static final int action_settings=0x7f080010;
+        public static final int action_tutorial=0x7f080012;
+        public static final int chronometer_capture=0x7f080008;
         public static final int container=0x7f080001;
         public static final int dialog=0x7f080003;
         public static final int drawer_layout=0x7f080000;
         public static final int edittext_newname=0x7f080004;
         public static final int image_button_capture=0x7f080006;
-        public static final int listview_item_duration=0x7f08000e;
-        public static final int listview_item_image=0x7f08000c;
-        public static final int listview_item_title=0x7f08000d;
-        public static final int listview_review=0x7f08000a;
+        public static final int listview_item_duration=0x7f08000f;
+        public static final int listview_item_image=0x7f08000d;
+        public static final int listview_item_title=0x7f08000e;
+        public static final int listview_review=0x7f08000b;
         public static final int navigation_drawer=0x7f080002;
-        public static final int searchview_review=0x7f080009;
-        public static final int section_label=0x7f080008;
+        public static final int searchview_review=0x7f08000a;
+        public static final int section_label=0x7f080009;
         public static final int textview_capture_status=0x7f080007;
         public static final int textview_capture_tips=0x7f080005;
     }
