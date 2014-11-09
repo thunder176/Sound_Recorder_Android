@@ -138,7 +138,7 @@ public class ReviewFragment extends Fragment {
 		for (int i = 0; i < recorderFiles.length; i++) {
 			HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("listview_item_title", recorderFiles[i]);
-			map.put("listview_item_image", R.drawable.recording_play);// 图像资源的ID
+			map.put("listview_item_image", R.drawable.review_recording_play);// 图像资源的ID
 			map.put("listview_item_duration", MediaReview.getInstance()
 					.getDurationByFileName(recorderFiles[i]));
 			mArrayList.add(map);

@@ -22,8 +22,9 @@ public class CaptureFragment extends Fragment {
 
 	private ImageButton mbtn_capture = null;
 	private TextView mtv_captureStatus = null;
-	private Chronometer mTimer = null;
 
+	private Chronometer mTimer = null;
+	// 如果录音中切换Review，停止录音；如果点Home键，保证CaptureFragment一致
 	private boolean mbl_isRecording = false;
 
 	// TODO 自动适应屏幕转换
@@ -50,11 +51,19 @@ public class CaptureFragment extends Fragment {
 				false);
 		mbtn_capture = (ImageButton) rootView
 				.findViewById(R.id.image_button_capture);
-		mbtn_capture.setImageResource(R.drawable.capture_start);
+		if (mbl_isRecording) {
+			// UI when capturing
+			mbtn_capture.setImageResource(R.drawable.capture_notification);
+		} else {
+			mbtn_capture.setImageResource(R.drawable.capture_start);
+		}
 		mtv_captureStatus = (TextView) rootView
 				.findViewById(R.id.textview_capture_status);
 		mTimer = (Chronometer) rootView.findViewById(R.id.chronometer_capture);
-		mTimer.setBase(SystemClock.elapsedRealtime());
+		if (!mbl_isRecording) {
+			// UI when not capturing
+			mTimer.setBase(SystemClock.elapsedRealtime());
+		}
 
 		mbtn_capture.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
@@ -64,19 +73,14 @@ public class CaptureFragment extends Fragment {
 					// mbl_isRecording = false;
 
 					// stop recording and release
-					MediaCapture.getInstance().stopRecording();
-					mbtn_capture.setImageResource(R.drawable.capture_start);
-					mtv_captureStatus.setText("");
-					mTimer.stop();
-					mTimer.setBase(SystemClock.elapsedRealtime());
-					mbl_isRecording = false;
+					stopRecordingInCaptureFragment();
 				} else {
 
 					// Toast.makeText(getActivity(), "capture begin.",
 					// Toast.LENGTH_SHORT).show();
 					// mbl_isRecording = true;
 
-					// prepare
+					// check the SD card
 					int result = MediaCapture.getInstance().startRecording();
 					if (-1 == result) {
 						Toast.makeText(getActivity(),
@@ -84,18 +88,35 @@ public class CaptureFragment extends Fragment {
 								Toast.LENGTH_SHORT).show();
 						return;
 					}
-					mbtn_capture
-							.setImageResource(R.drawable.capture_notification);
-					mtv_captureStatus.setText(getActivity().getString(
-							R.string.capture_tips));
-					mTimer.setBase(SystemClock.elapsedRealtime());
-					mTimer.start();
-					mbl_isRecording = true;
+
+					startRecordingInCaptureFragment();
 				}
 			}
 		});
 
 		return rootView;
+	}
+
+	public void startRecordingInCaptureFragment() {
+		mbtn_capture.setImageResource(R.drawable.capture_notification);
+		mtv_captureStatus.setText(getActivity()
+				.getString(R.string.capture_tips));
+		mTimer.setBase(SystemClock.elapsedRealtime());
+		mTimer.start();
+		mbl_isRecording = true;
+	}
+
+	public void stopRecordingInCaptureFragment() {
+		MediaCapture.getInstance().stopRecording();
+		mbtn_capture.setImageResource(R.drawable.capture_start);
+		mtv_captureStatus.setText("");
+		mTimer.stop();
+		mTimer.setBase(SystemClock.elapsedRealtime());
+		mbl_isRecording = false;
+	}
+	
+	public boolean getRecordingStatus() {
+		return mbl_isRecording;
 	}
 
 	@Override
