@@ -51,13 +51,13 @@ public class MainActivity extends Activity implements
 				.replace(R.id.container, CaptureFragment.getInstance())
 				.commit();
 	}
-	
+
 	@Override
 	protected void onResume() {
 		Log.e("Activity_lifecircle_testing", "MainActivity_onResume");
 		super.onResume();
 	}
-	
+
 	@Override
 	protected void onStart() {
 		Log.e("Activity_lifecircle_testing", "MainActivity_onStart");
@@ -125,12 +125,7 @@ public class MainActivity extends Activity implements
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		} else if (id == R.id.action_tutorial) {
-			Toast.makeText(this, "tutorial action.", Toast.LENGTH_SHORT).show();
-			return true;
-		} else if (id == R.id.action_capture) {
+		if (id == R.id.action_capture) {
 			// Toast.makeText(this, "capture action.",
 			// Toast.LENGTH_SHORT).show();
 			// show capture fragment
@@ -142,11 +137,20 @@ public class MainActivity extends Activity implements
 		} else if (id == R.id.action_review) {
 			// Toast.makeText(this, "review action.",
 			// Toast.LENGTH_SHORT).show();
+			
+			// if it's capturing, stop
+			CaptureFragment cf = CaptureFragment.getInstance();
+			if(cf.getRecordingStatus()) {
+				cf.stopRecordingInCaptureFragment();
+			}
 			// show capture fragment
 			FragmentManager fragmentManager = getFragmentManager();
 			fragmentManager.beginTransaction()
 					.replace(R.id.container, ReviewFragment.getInstance())
 					.commit();
+			return true;
+		} else if (id == R.id.action_tutorial) {
+			Toast.makeText(this, "tutorial action.", Toast.LENGTH_SHORT).show();
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
