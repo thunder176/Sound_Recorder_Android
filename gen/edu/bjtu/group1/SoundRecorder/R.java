@@ -49,12 +49,14 @@ public final class R {
         public static final int ic_action_tutorial=0x7f020004;
         public static final int ic_drawer=0x7f020005;
         public static final int ic_launcher=0x7f020006;
-        public static final int review_recording_play=0x7f020007;
+        public static final int recording_play=0x7f020007;
     }
     public static final class id {
         public static final int RelativeLayout01=0x7f08000c;
-        public static final int action_capture=0x7f080010;
-        public static final int action_review=0x7f080011;
+        public static final int action_capture=0x7f080013;
+        public static final int action_example=0x7f080011;
+        public static final int action_review=0x7f080014;
+        public static final int action_settings=0x7f080010;
         public static final int action_tutorial=0x7f080012;
         public static final int chronometer_capture=0x7f080008;
         public static final int container=0x7f080001;
