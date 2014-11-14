@@ -11,7 +11,7 @@ import android.util.Log;
 public class MediaReview implements MediaPlayer.OnPreparedListener {
 	private static MediaReview mMediaReview;
 
-	private static MediaPlayer mMediaPlayer = null;
+	private MediaPlayer mMediaPlayer = null;
 
 	private MediaReview() {
 	}
@@ -101,6 +101,11 @@ public class MediaReview implements MediaPlayer.OnPreparedListener {
 	}
 
 	public void onPrepared(MediaPlayer arg0) {
+		if (FragmentReviewDetails.getInstance()
+				.isFragmentReviewDetailsDisplay()) {
+			FragmentReviewDetails.getInstance().setRecordDurationAndSeekBar(
+					mMediaPlayer.getDuration());
+		}
 		mMediaPlayer.start();
 	}
 
@@ -120,6 +125,23 @@ public class MediaReview implements MediaPlayer.OnPreparedListener {
 	public int renameRecordByFileName(String oldName, String newName) {
 		return SaveOrLoadFileHelper.getInstance().renameRecordByFileName(
 				oldName, newName);
+	}
+
+	public int getCurrentPosition() {
+		return this.mMediaPlayer.getCurrentPosition();
+	}
+
+	public void start() {
+		this.mMediaPlayer.start();
+		
+	}
+
+	public void pause() {
+		this.mMediaPlayer.pause();
+	}
+
+	public void seekTo(int progress) {
+		this.mMediaPlayer.seekTo(progress);
 	}
 
 }

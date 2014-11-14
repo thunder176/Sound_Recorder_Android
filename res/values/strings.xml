@@ -34,5 +34,10 @@
     <string name="review_rename_result_file_exist">The name has been already uesd.</string>
     <string name="review_rename_result_same_name">You cannot input a same name.</string>
     <string name="review_rename_result_success">Rename success</string>
+    <string name="button_review_details_share">Share</string>
+    <string name="button_review_details_label">Label</string>
+    <string name="button_review_details_play">Play</string>
+    <string name="button_review_details_stop">Stop</string>
+    <string name="text_review_details_sample">2014_11_14 00_00_00</string>
 
 </resources>

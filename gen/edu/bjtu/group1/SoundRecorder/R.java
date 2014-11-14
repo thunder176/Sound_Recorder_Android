@@ -52,25 +52,31 @@ public final class R {
         public static final int review_recording_play=0x7f020007;
     }
     public static final class id {
-        public static final int RelativeLayout01=0x7f08000c;
-        public static final int action_capture=0x7f080010;
-        public static final int action_review=0x7f080011;
-        public static final int action_tutorial=0x7f080012;
+        public static final int RelativeLayout01=0x7f080012;
+        public static final int action_capture=0x7f080016;
+        public static final int action_review=0x7f080017;
+        public static final int action_tutorial=0x7f080018;
+        public static final int button_review_details_label=0x7f08000e;
+        public static final int button_review_details_play=0x7f080010;
+        public static final int button_review_details_share=0x7f08000d;
         public static final int chronometer_capture=0x7f080008;
         public static final int container=0x7f080001;
         public static final int dialog=0x7f080003;
         public static final int drawer_layout=0x7f080000;
         public static final int edittext_newname=0x7f080004;
         public static final int image_button_capture=0x7f080006;
-        public static final int listview_item_duration=0x7f08000f;
-        public static final int listview_item_image=0x7f08000d;
-        public static final int listview_item_title=0x7f08000e;
+        public static final int listview_item_duration=0x7f080015;
+        public static final int listview_item_image=0x7f080013;
+        public static final int listview_item_title=0x7f080014;
         public static final int listview_review=0x7f08000b;
+        public static final int listview_review_details=0x7f08000c;
         public static final int navigation_drawer=0x7f080002;
         public static final int searchview_review=0x7f08000a;
         public static final int section_label=0x7f080009;
+        public static final int seekbar_review_details=0x7f080011;
         public static final int textview_capture_status=0x7f080007;
         public static final int textview_capture_tips=0x7f080005;
+        public static final int textview_review_details_name=0x7f08000f;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
@@ -79,7 +85,8 @@ public final class R {
         public static final int fragment_main=0x7f030003;
         public static final int fragment_navigation_drawer=0x7f030004;
         public static final int fragment_review=0x7f030005;
-        public static final int listview_review_items=0x7f030006;
+        public static final int fragment_review_details=0x7f030006;
+        public static final int listview_review_items=0x7f030007;
     }
     public static final class menu {
         public static final int global=0x7f070000;
@@ -93,6 +100,10 @@ public final class R {
         public static final int action_tutorial=0x7f050008;
         public static final int app_name=0x7f050000;
         public static final int button_capture=0x7f05000c;
+        public static final int button_review_details_label=0x7f05001b;
+        public static final int button_review_details_play=0x7f05001c;
+        public static final int button_review_details_share=0x7f05001a;
+        public static final int button_review_details_stop=0x7f05001d;
         public static final int capture_intro_message=0x7f05000b;
         public static final int capture_tips=0x7f05000e;
         public static final int capture_tips_not_recording=0x7f05000d;
@@ -109,6 +120,7 @@ public final class R {
         public static final int review_rename_result_null_name=0x7f050015;
         public static final int review_rename_result_same_name=0x7f050018;
         public static final int review_rename_result_success=0x7f050019;
+        public static final int text_review_details_sample=0x7f05001e;
         public static final int title_section1=0x7f050001;
         public static final int title_section2=0x7f050002;
         public static final int title_section3=0x7f050003;

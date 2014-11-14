@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:paddingTop="12dip" />
+        android:layout_centerVertical="true" />
 
     <TextView
         android:id="@+id/listview_item_title"
@@ -24,6 +24,6 @@
         android:id="@+id/listview_item_duration"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/listview_item_title"/>
+        android:layout_below="@+id/listview_item_title" />
 
 </RelativeLayout>

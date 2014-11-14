@@ -7,6 +7,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,13 +17,13 @@ import android.support.v4.widget.DrawerLayout;
 import android.widget.Toast;
 
 public class MainActivity extends Activity implements
-		NavigationDrawerFragment.NavigationDrawerCallbacks {
+		FragmentNavigationDrawer.NavigationDrawerCallbacks {
 
 	/**
 	 * Fragment managing the behaviors, interactions and presentation of the
 	 * navigation drawer.
 	 */
-	private NavigationDrawerFragment mNavigationDrawerFragment;
+	private FragmentNavigationDrawer mNavigationDrawerFragment;
 
 	/**
 	 * Used to store the last screen title. For use in
@@ -37,7 +38,7 @@ public class MainActivity extends Activity implements
 		getActionBar().setDisplayShowTitleEnabled(false);
 		getActionBar().setDisplayShowHomeEnabled(true);
 
-		mNavigationDrawerFragment = (NavigationDrawerFragment) getFragmentManager()
+		mNavigationDrawerFragment = (FragmentNavigationDrawer) getFragmentManager()
 				.findFragmentById(R.id.navigation_drawer);
 		mTitle = getTitle();
 
@@ -48,7 +49,7 @@ public class MainActivity extends Activity implements
 		// capture fragment
 		FragmentManager fragmentManager = getFragmentManager();
 		fragmentManager.beginTransaction()
-				.replace(R.id.container, CaptureFragment.getInstance())
+				.replace(R.id.container, FragmentCapture.getInstance())
 				.commit();
 	}
 
@@ -131,22 +132,22 @@ public class MainActivity extends Activity implements
 			// show capture fragment
 			FragmentManager fragmentManager = getFragmentManager();
 			fragmentManager.beginTransaction()
-					.replace(R.id.container, CaptureFragment.getInstance())
+					.replace(R.id.container, FragmentCapture.getInstance())
 					.commit();
 			return true;
 		} else if (id == R.id.action_review) {
 			// Toast.makeText(this, "review action.",
 			// Toast.LENGTH_SHORT).show();
-			
+
 			// if it's capturing, stop
-			CaptureFragment cf = CaptureFragment.getInstance();
-			if(cf.getRecordingStatus()) {
+			FragmentCapture cf = FragmentCapture.getInstance();
+			if (cf.getRecordingStatus()) {
 				cf.stopRecordingInCaptureFragment();
 			}
 			// show capture fragment
 			FragmentManager fragmentManager = getFragmentManager();
 			fragmentManager.beginTransaction()
-					.replace(R.id.container, ReviewFragment.getInstance())
+					.replace(R.id.container, FragmentReview.getInstance())
 					.commit();
 			return true;
 		} else if (id == R.id.action_tutorial) {
@@ -194,6 +195,16 @@ public class MainActivity extends Activity implements
 			((MainActivity) activity).onSectionAttached(getArguments().getInt(
 					ARG_SECTION_NUMBER));
 		}
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (FragmentReviewDetails.getInstance()
+				.isFragmentReviewDetailsDisplay()) {
+			FragmentReviewDetails.getInstance().onKeyDown(keyCode, event);
+			return true;
+		}
+		return super.onKeyDown(keyCode, event);
 	}
 
 }
