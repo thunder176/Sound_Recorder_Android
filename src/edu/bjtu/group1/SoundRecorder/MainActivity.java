@@ -31,12 +31,18 @@ public class MainActivity extends Activity implements
 	 */
 	private CharSequence mTitle;
 
+	// show notification if press home when capturing
+	BackgroundLogo bgLogo = null;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		Log.e("Activity_lifecircle_testing", "MainActivity_onCreate");
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		getActionBar().setDisplayShowTitleEnabled(false);
 		getActionBar().setDisplayShowHomeEnabled(true);
+
+		bgLogo = new BackgroundLogo(this);
 
 		mNavigationDrawerFragment = (FragmentNavigationDrawer) getFragmentManager()
 				.findFragmentById(R.id.navigation_drawer);
@@ -66,6 +72,13 @@ public class MainActivity extends Activity implements
 	}
 
 	@Override
+	protected void onRestart() {
+		Log.e("Activity_lifecircle_testing", "MainActivity_onRestart");
+		super.onRestart();
+		bgLogo.cancelNotification();
+	}
+
+	@Override
 	public void onPause() {
 		Log.e("Activity_lifecircle_testing", "MainActivity_onPause");
 		super.onPause();
@@ -75,6 +88,12 @@ public class MainActivity extends Activity implements
 	protected void onStop() {
 		Log.e("Activity_lifecircle_testing", "MainActivity_onStop");
 		super.onStop();
+	}
+
+	@Override
+	protected void onDestroy() {
+		Log.e("Activity_lifecircle_testing", "MainActivity_onDestroy");
+		super.onDestroy();
 	}
 
 	public void onNavigationDrawerItemSelected(int position) {
@@ -141,7 +160,7 @@ public class MainActivity extends Activity implements
 
 			// if it's capturing, stop
 			FragmentCapture cf = FragmentCapture.getInstance();
-			if (cf.getRecordingStatus()) {
+			if (cf.isRecordingNow()) {
 				cf.stopRecordingInCaptureFragment();
 			}
 			// show capture fragment
@@ -199,12 +218,26 @@ public class MainActivity extends Activity implements
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (FragmentReviewDetails.getInstance()
-				.isFragmentReviewDetailsDisplay()) {
-			FragmentReviewDetails.getInstance().onKeyDown(keyCode, event);
-			return true;
+		if (keyCode == KeyEvent.KEYCODE_BACK) { // 返回键
+			if (FragmentReviewDetails.getInstance()
+					.isFragmentReviewDetailsDisplay()) {
+				FragmentReviewDetails.getInstance().onKeyDown(keyCode, event);
+				return true;
+			}
+			if (FragmentCapture.getInstance().isRecordingNow()) {
+				return true;
+			}
 		}
 		return super.onKeyDown(keyCode, event);
+	}
+
+	@Override
+	// deal with home button pressed
+	protected void onUserLeaveHint() {
+		if (FragmentCapture.getInstance().isRecordingNow()) {
+			bgLogo.showNotification(getString(R.string.capture_tips_background));
+		}
+		super.onUserLeaveHint();
 	}
 
 }

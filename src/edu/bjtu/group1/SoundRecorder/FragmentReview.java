@@ -2,6 +2,7 @@ package edu.bjtu.group1.SoundRecorder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
@@ -51,7 +52,6 @@ public class FragmentReview extends Fragment {
 	// Record file name
 	private String mstr_fileName = null;
 
-	// TODO 自动适应屏幕转换
 	public FragmentReview() {
 	}
 
@@ -200,7 +200,7 @@ public class FragmentReview extends Fragment {
 						.getItemAtPosition(arg2);
 				String strFileName = (String) hmItem.get("listview_item_title");
 
-				// TODO show review detail fragment
+				// show review detail fragment
 				FragmentReviewDetails.getInstance().setRecordName(strFileName);
 				FragmentManager fragmentManager = getFragmentManager();
 				fragmentManager
@@ -338,7 +338,16 @@ public class FragmentReview extends Fragment {
 		} else if (1 == item.getItemId()) {
 			// Do delete operation
 			if (MediaReview.getInstance().deleteRecordByFileName(mstr_fileName)) {
-				initListView();
+				if (null != mArrayList) {
+					Iterator<HashMap<String, Object>> it = mArrayList.iterator();
+					while (it.hasNext()) {
+						if (((String) it.next().get("listview_item_title"))
+								.equals(mstr_fileName)) {
+							it.remove();
+						}
+					}
+				}
+				updateListView();
 			}
 		}
 		return super.onContextItemSelected(item);
@@ -372,6 +381,12 @@ public class FragmentReview extends Fragment {
 		MediaReview.getInstance().stopPlay();
 		hideSoftInput();
 		super.onStop();
+	}
+	
+	@Override
+	public void onDestroy() {
+		Log.e("Fragment_lifecircle_testing", "ReviewFragment_onDestroy");
+		super.onDestroy();
 	}
 
 	public void hideSoftInput() {

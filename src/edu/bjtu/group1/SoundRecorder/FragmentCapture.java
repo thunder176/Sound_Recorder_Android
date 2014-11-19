@@ -51,19 +51,9 @@ public class FragmentCapture extends Fragment {
 				false);
 		mbtn_capture = (ImageButton) rootView
 				.findViewById(R.id.image_button_capture);
-		if (mbl_isRecording) {
-			// UI when capturing
-			mbtn_capture.setImageResource(R.drawable.capture_notification);
-		} else {
-			mbtn_capture.setImageResource(R.drawable.capture_start);
-		}
 		mtv_captureStatus = (TextView) rootView
 				.findViewById(R.id.textview_capture_status);
 		mTimer = (Chronometer) rootView.findViewById(R.id.chronometer_capture);
-		if (!mbl_isRecording) {
-			// UI when not capturing
-			mTimer.setBase(SystemClock.elapsedRealtime());
-		}
 
 		mbtn_capture.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
@@ -114,14 +104,33 @@ public class FragmentCapture extends Fragment {
 		mTimer.setBase(SystemClock.elapsedRealtime());
 		mbl_isRecording = false;
 	}
-	
-	public boolean getRecordingStatus() {
+
+	public boolean isRecordingNow() {
 		return mbl_isRecording;
 	}
 
 	@Override
 	public void onResume() {
 		Log.e("Fragment_lifecircle_testing", "CaptureFragment_onResume");
+		if (mbl_isRecording) {
+			// UI when capturing
+			mbtn_capture.setImageResource(R.drawable.capture_notification);
+		} else {
+			mbtn_capture.setImageResource(R.drawable.capture_start);
+		}
+		if (mbl_isRecording) {
+			// UI when capturing
+			mtv_captureStatus.setText(getActivity().getString(
+					R.string.capture_tips));
+		}
+		if (!mbl_isRecording) {
+			// UI when not capturing
+			mTimer.setBase(SystemClock.elapsedRealtime());
+		} else {
+			mTimer.setBase(MediaCapture.getInstance().getCaptureTime());
+			mTimer.start();
+		}
+
 		super.onResume();
 	}
 
@@ -141,5 +150,11 @@ public class FragmentCapture extends Fragment {
 	public void onStop() {
 		Log.e("Fragment_lifecircle_testing", "CaptureFragment_onStop");
 		super.onStop();
+	}
+
+	@Override
+	public void onDestroy() {
+		Log.e("Fragment_lifecircle_testing", "CaptureFragment_onDestroy");
+		super.onDestroy();
 	}
 }

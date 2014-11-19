@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 
 import android.media.MediaRecorder;
 import android.media.MediaRecorder.OnErrorListener;
+import android.os.SystemClock;
 import android.util.Log;
 
 public class MediaCapture {
@@ -14,6 +15,8 @@ public class MediaCapture {
 
 	private static MediaRecorder mRecorder = null;
 
+	private long ml_captureTime = 0;
+	
 	private MediaCapture() {
 	}
 
@@ -64,15 +67,21 @@ public class MediaCapture {
 				Log.e("MediaRecorder_setOnErrorListener", "ERROR HAPPENED");
 			}
 		});
+		ml_captureTime = SystemClock.elapsedRealtime();
 		mRecorder.start();
 
 		return 0;
 	}
 
 	public void stopRecording() {
+		ml_captureTime = 0;
 		mRecorder.stop();
 		mRecorder.release();
 		mRecorder = null;
+	}
+	
+	public long getCaptureTime() {
+		return ml_captureTime;
 	}
 
 }

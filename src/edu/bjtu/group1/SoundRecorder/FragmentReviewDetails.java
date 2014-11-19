@@ -27,6 +27,7 @@ public class FragmentReviewDetails extends Fragment {
 
 	// Playing status
 	private boolean mbl_isRecordPlaying = false;
+	private boolean mbl_isNeedToPlayAfterPause = false;
 
 	// UI components
 	private ListView mlv_review_details = null;
@@ -38,14 +39,9 @@ public class FragmentReviewDetails extends Fragment {
 
 	// Record file name
 	private String mstr_recordName = null;
+
 	private int mi_recordDuration = 0;
 
-	public void setRecordDurationAndSeekBar(int time) {
-		this.mi_recordDuration = time;
-		msb_review_details_seekbar.setMax(mi_recordDuration);
-	}
-
-	// TODO 自动适应屏幕转换
 	public FragmentReviewDetails() {
 	}
 
@@ -79,12 +75,20 @@ public class FragmentReviewDetails extends Fragment {
 				.findViewById(R.id.seekbar_review_details);
 
 		doInit();
-		// play when open
-		MediaReview.getInstance().playRecordByFileName(mstr_recordName);
-		mbl_isRecordPlaying = true;
-		mbtn_review_details_play.setText(getActivity().getString(
-				R.string.button_review_details_stop));
 		setListener();
+
+		mbl_isNeedToPlayAfterPause = false;
+		mbl_isRecordPlaying = false;
+		msb_review_details_seekbar.setEnabled(true);
+		mbtn_review_details_play.setText(getActivity().getString(
+				R.string.button_review_details_play));
+		// play when open
+		// mbl_isRecordPlaying = true;
+		// mbtn_review_details_play.setText(getActivity().getString(
+		// R.string.button_review_details_pause));
+		// msb_review_details_seekbar.setEnabled(true);
+		// MediaReview.getInstance().playRecordByFileName(mstr_recordName);
+
 		return rootView;
 	}
 
@@ -93,10 +97,25 @@ public class FragmentReviewDetails extends Fragment {
 	Runnable updateThread = new Runnable() {
 		public void run() {
 			// 获得歌曲现在播放位置并设置成播放进度条的值
+			// String log = "Position: "
+			// + MediaReview.getInstance().getCurrentPosition();
+			// Log.e("FragmentReviewDetails::updateThread", log);
 			msb_review_details_seekbar.setProgress(MediaReview.getInstance()
 					.getCurrentPosition());
-			// 每次延迟100毫秒再启动线程
-			handler.postDelayed(updateThread, 100);
+			// 每次延迟10毫秒再启动线程
+			handler.postDelayed(updateThread, 10);
+
+			// UI when stop
+			if (MediaReview.getInstance().isPlayComplete()) {
+				mbl_isNeedToPlayAfterPause = false;
+				mbl_isRecordPlaying = false;
+				mbtn_review_details_play.setText(getActivity().getString(
+						R.string.button_review_details_play));
+				msb_review_details_seekbar.setProgress(mi_recordDuration);
+				msb_review_details_seekbar.setEnabled(false);
+				// cancel thread for SeekBar
+				handler.removeCallbacks(updateThread);
+			}
 		}
 	};
 
@@ -104,22 +123,46 @@ public class FragmentReviewDetails extends Fragment {
 		mbtn_review_details_play
 				.setOnClickListener(new Button.OnClickListener() {
 					public void onClick(View arg0) {
-						if (!mbl_isRecordPlaying) {
-							MediaReview.getInstance().start();
-							mbtn_review_details_play
-									.setText(getActivity()
-											.getString(
-													R.string.button_review_details_stop));
-							// 启动
-							handler.post(updateThread);
-						} else {
-							MediaReview.getInstance().pause();
+						if (mbl_isRecordPlaying) {
+							// click pause button
+							mbl_isRecordPlaying = false;
+							mbl_isNeedToPlayAfterPause = true;
+							msb_review_details_seekbar.setEnabled(true);
 							mbtn_review_details_play
 									.setText(getActivity()
 											.getString(
 													R.string.button_review_details_play));
-							// 取消线程
+
+							MediaReview.getInstance().pause();
+							// cancel thread for SeekBar
 							handler.removeCallbacks(updateThread);
+						} else if (!mbl_isRecordPlaying
+								&& mbl_isNeedToPlayAfterPause) {
+							// click play button when it was pause
+							mbl_isRecordPlaying = true;
+							msb_review_details_seekbar.setEnabled(true);
+							mbtn_review_details_play
+									.setText(getActivity()
+											.getString(
+													R.string.button_review_details_pause));
+
+							MediaReview.getInstance().startAfterPause();
+							// start thread for SeekBar
+							handler.post(updateThread);
+						} else if (!mbl_isRecordPlaying
+								&& !mbl_isNeedToPlayAfterPause) {
+							// click play again
+							mbl_isRecordPlaying = true;
+							msb_review_details_seekbar.setEnabled(true);
+							mbtn_review_details_play
+									.setText(getActivity()
+											.getString(
+													R.string.button_review_details_pause));
+
+							MediaReview.getInstance().playRecordByFileName(
+									mstr_recordName);
+							// start thread for SeekBar
+							handler.post(updateThread);
 						}
 					}
 				});
@@ -128,17 +171,16 @@ public class FragmentReviewDetails extends Fragment {
 					public void onProgressChanged(SeekBar seekBar,
 							int progress, boolean fromUser) {
 						// fromUser判断是用户改变的滑块的值
-						if (fromUser == true) {
+						if (fromUser == true
+								&& !MediaReview.getInstance().isPlayComplete()) {
 							MediaReview.getInstance().seekTo(progress);
 						}
 					}
 
 					public void onStartTrackingTouch(SeekBar seekBar) {
-						// TODO Auto-generated method stub
 					}
 
 					public void onStopTrackingTouch(SeekBar seekBar) {
-						// TODO Auto-generated method stub
 					}
 				});
 	}
@@ -165,6 +207,12 @@ public class FragmentReviewDetails extends Fragment {
 		super.onStop();
 	}
 
+	@Override
+	public void onDestroy() {
+		Log.e("Fragment_lifecircle_testing", "ReviewDetailsFragment_onDestroy");
+		super.onDestroy();
+	}
+
 	public boolean isFragmentReviewDetailsDisplay() {
 		return mbl_isFragmentReviewDetailsDisplay;
 	}
@@ -177,6 +225,16 @@ public class FragmentReviewDetails extends Fragment {
 					.commit();
 		}
 		return true;
+	}
+
+	public void setRecordDurationAndSeekBar(int time) {
+		this.mi_recordDuration = time;
+		msb_review_details_seekbar.setMax(mi_recordDuration);
+		// start thread for SeekBar
+		handler.post(updateThread);
+
+		// String log = "Time: " + time;
+		// Log.e("FragmentReviewDetails::setRecordDurationAndSeekBar", log);
 	}
 
 }

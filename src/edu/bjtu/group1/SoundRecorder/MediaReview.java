@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
 import android.util.Log;
 
@@ -12,6 +13,8 @@ public class MediaReview implements MediaPlayer.OnPreparedListener {
 	private static MediaReview mMediaReview;
 
 	private MediaPlayer mMediaPlayer = null;
+
+	private boolean mbl_isPlayComplete = false;
 
 	private MediaReview() {
 	}
@@ -41,6 +44,12 @@ public class MediaReview implements MediaPlayer.OnPreparedListener {
 			}
 			mMediaPlayer.setDataSource(path);
 			mMediaPlayer.setOnPreparedListener(this);
+			mMediaPlayer.setOnCompletionListener(new OnCompletionListener() {
+
+				public void onCompletion(MediaPlayer mp) {
+					mbl_isPlayComplete = true;
+				}
+			});
 			mMediaPlayer.setOnErrorListener(new OnErrorListener() {
 
 				public boolean onError(MediaPlayer mp, int what, int extra) {
@@ -52,6 +61,7 @@ public class MediaReview implements MediaPlayer.OnPreparedListener {
 					return false;
 				}
 			});
+			mbl_isPlayComplete = false;
 			mMediaPlayer.prepareAsync();
 		} catch (IllegalArgumentException e) {
 			Log.e("PLAYRECORD_IllegalArgumentException", e.getMessage());
@@ -127,13 +137,17 @@ public class MediaReview implements MediaPlayer.OnPreparedListener {
 				oldName, newName);
 	}
 
+	public boolean isPlayComplete() {
+		return mbl_isPlayComplete;
+	}
+
 	public int getCurrentPosition() {
 		return this.mMediaPlayer.getCurrentPosition();
 	}
 
-	public void start() {
+	public void startAfterPause() {
 		this.mMediaPlayer.start();
-		
+
 	}
 
 	public void pause() {
@@ -141,6 +155,8 @@ public class MediaReview implements MediaPlayer.OnPreparedListener {
 	}
 
 	public void seekTo(int progress) {
+		// String log = "Time: " + progress;
+		// Log.e("MediaReview::seekTo", log);
 		this.mMediaPlayer.seekTo(progress);
 	}
 
