@@ -48,6 +48,7 @@ public class MediaReview implements MediaPlayer.OnPreparedListener {
 
 				public void onCompletion(MediaPlayer mp) {
 					mbl_isPlayComplete = true;
+					stopPlay();
 				}
 			});
 			mMediaPlayer.setOnErrorListener(new OnErrorListener() {
@@ -63,15 +64,70 @@ public class MediaReview implements MediaPlayer.OnPreparedListener {
 			});
 			mbl_isPlayComplete = false;
 			mMediaPlayer.prepareAsync();
-		} catch (IllegalArgumentException e) {
-			Log.e("PLAYRECORD_IllegalArgumentException", e.getMessage());
-		} catch (SecurityException e) {
-			Log.e("PLAYRECORD_SecurityException", e.getMessage());
-		} catch (IllegalStateException e) {
-			Log.e("PLAYRECORD_IllegalStateException", e.getMessage());
-		} catch (IOException e) {
-			Log.e("PLAYRECORD_IOException", e.getMessage());
+		} catch (Exception e) {
+			Log.e("PLAYRECORD_Exception", e.getMessage());
 		}
+	}
+
+	public void playKiiRecordByName(String fileName) {
+		String path = SaveOrLoadFileHelper.getInstance().getKiiDirByFileName(
+				fileName);
+		try {
+			if (null == mMediaPlayer) {
+				mMediaPlayer = new MediaPlayer();
+			} else {
+				stopPlay();
+				mMediaPlayer = new MediaPlayer();
+			}
+			mMediaPlayer.setDataSource(path);
+			mMediaPlayer.setOnPreparedListener(this);
+			mMediaPlayer.setOnCompletionListener(new OnCompletionListener() {
+
+				public void onCompletion(MediaPlayer mp) {
+					mbl_isPlayComplete = true;
+					stopPlay();
+				}
+			});
+			mMediaPlayer.setOnErrorListener(new OnErrorListener() {
+
+				public boolean onError(MediaPlayer mp, int what, int extra) {
+					// 发生错误，停止播放
+					mMediaPlayer.stop();
+					mMediaPlayer.release();
+					mMediaPlayer = null;
+					Log.e("MediaPlayer_setOnErrorListener", "ERROR HAPPENED");
+					return false;
+				}
+			});
+			mbl_isPlayComplete = false;
+			mMediaPlayer.prepareAsync();
+		} catch (Exception e) {
+			Log.e("PLAYRECORD_Exception", e.getMessage());
+		}
+	}
+
+	public int getRecordDurationMillis(String fileName) {
+		String path = SaveOrLoadFileHelper.getInstance()
+				.getRecordDirByFileName(fileName);
+		if (null == mMediaPlayer) {
+			mMediaPlayer = new MediaPlayer();
+		} else {
+			stopPlay();
+			mMediaPlayer = new MediaPlayer();
+		}
+		try {
+			mMediaPlayer.setDataSource(path);
+			mMediaPlayer.prepare();
+			int iDuration = mMediaPlayer.getDuration();
+			stopPlay();
+			if (-1 != iDuration) {
+				return iDuration;
+			}
+		} catch (Exception e) {
+			Log.e("getRecordDurationMillis_Exception", "Msg: " + e.getMessage());
+		}
+
+		return 0;
 	}
 
 	public String getDurationByFileName(String fileName) {
@@ -86,17 +142,12 @@ public class MediaReview implements MediaPlayer.OnPreparedListener {
 		try {
 			mMediaPlayer.setDataSource(path);
 			mMediaPlayer.prepare();
-		} catch (IllegalArgumentException e) {
-			Log.e("PLAYRECORD_IllegalArgumentException", e.getMessage());
-		} catch (SecurityException e) {
-			Log.e("PLAYRECORD_SecurityException", e.getMessage());
-		} catch (IllegalStateException e) {
-			Log.e("PLAYRECORD_IllegalStateException", e.getMessage());
-		} catch (IOException e) {
-			Log.e("PLAYRECORD_IOException", e.getMessage());
+		} catch (Exception e) {
+			Log.e("getDurationByFileName_Exception", e.getMessage());
 		}
 
 		int iDuration = mMediaPlayer.getDuration();
+		stopPlay();
 		if (-1 != iDuration) {
 			// String strDuration = new SimpleDateFormat("hh:mm:ss")
 			// .format(new Date(iDuration));
@@ -111,10 +162,14 @@ public class MediaReview implements MediaPlayer.OnPreparedListener {
 	}
 
 	public void onPrepared(MediaPlayer arg0) {
-		if (FragmentReviewDetails.getInstance()
-				.isFragmentReviewDetailsDisplay()) {
-			FragmentReviewDetails.getInstance().setRecordDurationAndSeekBar(
-					mMediaPlayer.getDuration());
+		if (FragmentReviewDetailsUnlogin.getInstance()
+				.isFragmentReviewDetailsUnloginDisplay()) {
+			FragmentReviewDetailsUnlogin.getInstance()
+					.setRecordDurationAndSeekBar(mMediaPlayer.getDuration());
+		} else if (FragmentReviewDetailsLogin.getInstance()
+				.isFragmentReviewDetailsLoginDisplay()) {
+			FragmentReviewDetailsLogin.getInstance()
+					.setRecordDurationAndSeekBar(mMediaPlayer.getDuration());
 		}
 		mMediaPlayer.start();
 	}
@@ -142,22 +197,31 @@ public class MediaReview implements MediaPlayer.OnPreparedListener {
 	}
 
 	public int getCurrentPosition() {
-		return this.mMediaPlayer.getCurrentPosition();
+		if (null != mMediaPlayer) {
+			return this.mMediaPlayer.getCurrentPosition();
+		} else {
+			return 0;
+		}
 	}
 
 	public void startAfterPause() {
-		this.mMediaPlayer.start();
-
+		if (null != mMediaPlayer) {
+			this.mMediaPlayer.start();
+		}
 	}
 
 	public void pause() {
-		this.mMediaPlayer.pause();
+		if (null != mMediaPlayer) {
+			this.mMediaPlayer.pause();
+		}
 	}
 
 	public void seekTo(int progress) {
 		// String log = "Time: " + progress;
 		// Log.e("MediaReview::seekTo", log);
-		this.mMediaPlayer.seekTo(progress);
+		if (null != mMediaPlayer) {
+			this.mMediaPlayer.seekTo(progress);
+		}
 	}
 
 }

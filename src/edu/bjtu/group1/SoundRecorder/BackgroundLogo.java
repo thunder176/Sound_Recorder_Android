@@ -24,7 +24,7 @@ public class BackgroundLogo {
 	public void showNotification(String name) {
 		// 创建一个NotificationManager的引用
 		NotificationManager notificationManager = (NotificationManager) context.getSystemService(android.content.Context.NOTIFICATION_SERVICE);
-		Notification  notification = new Notification(R.drawable.ic_launcher, name,//R.drawable.ic_launcher��ͼƬ
+		Notification  notification = new Notification(R.drawable.ic_launcher, name,
 				System.currentTimeMillis());
 		notification.flags |= Notification.FLAG_ONGOING_EVENT;
 		notification.flags |= Notification.FLAG_NO_CLEAR;

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">小录音器</string>
+    <string name="title_section1">设置</string>
+    <string name="title_section2">教程</string>
+    <string name="title_section3">反馈</string>
+    <string name="navigation_drawer_open">打开导航栏</string>
+    <string name="navigation_drwer_close">关闭导航栏</string>
+    <string name="action_example">示例</string>
+    <string name="action_settings">设置</string>
+    <string name="action_tutorial">教程</string>
+    <string name="action_capture"> 录制  </string>
+    <string name="action_review"> 播放列表  </string>
+    <string name="capture_intro_message">
+		<![CDATA[
+        
+            	录制那些对话、会议和课程中的重要时刻，并可以播放它们
+        
+        ]]>
+    </string>
+    <string name="button_capture">开启</string>
+    <string name="capture_tips_not_recording"></string>
+    <string name="capture_tips">录制中...</string>
+    <string name="review_context_menu_title">点击选择对应操作</string>
+    <string name="review_context_menu_rename">重命名</string>
+    <string name="review_context_menu_delete">删除</string>
+    <string name="review_rename_dialog_title">请输入新的文件名</string>
+    <string name="review_rename_dialog_ok">确定</string>
+    <string name="review_rename_dialog_cancel">取消</string>
+    <string name="review_rename_result_null_name">一定要输入一个名字</string>
+    <string name="review_rename_result_not_exist">该文件已经不存在了</string>
+    <string name="review_rename_result_file_exist">该名字已经被占用</string>
+    <string name="review_rename_result_same_name">不可以输入一个同样的名字</string>
+    <string name="review_rename_result_success">重命名成功</string>
+    <string name="button_review_details_upload">上传</string>
+    <string name="button_review_details_share">分享</string>
+    <string name="button_review_details_label">标签</string>
+    <string name="button_review_details_play">播放</string>
+    <string name="button_review_details_stop">停止</string>
+    <string name="button_review_details_pause">暂停</string>
+    <string name="button_review_details_login">登录</string>
+    <string name="button_review_details_Register">注册与登录</string>
+    <string name="text_review_details_sample">2014_11_14 00_00_00</string>
+    <string name="text_review_details_username">用户名</string>
+    <string name="text_review_details_pwd">密码</string>
+    <string name="text_review_details_tips">请登录以备份到云端:</string>
+    <string name="text_review_details_kii_title">题目</string>
+    <string name="text_review_details_kii_status">状态:</string>
+    <string name="text_review_details_kii_suspended">暂停</string>
+    <string name="text_review_details_kii_error">错误</string>
+    <string name="text_review_details_kii_downloading">下载中...</string>
+    <string name="text_review_details_kii_finished">已完成</string>
+    <string name="text_review_details_kii_uploading">上传中...</string>
+    <string name="text_review_details_kii_ask_resume">确定要恢复吗？</string>
+    <string name="text_review_details_kii_ask_suspend">确定要暂停吗？</string>
+    <string name="text_review_details_kii_ask_download">是否确定下载吗？</string>
+    <string name="text_review_details_kii_ask_delete">确定要删除吗？</string>
+    <string name="text_review_details_kii_common_yes">是</string>
+    <string name="text_review_details_kii_common_no">否</string>
+    <string name="text_review_details_kii_suspend_failed">暂停失败</string>
+    <string name="text_review_details_kii_delete_failed">删除失败</string>
+    <string name="text_review_details_kii_in_progressing">处理中...</string>
+    <string name="text_review_details_kii_delete_uploader_failed">取消上传操作失败</string>
+    <string name="text_review_details_kii_load_uploaders_failed">执行上传操作失败</string>
+    <string name="text_review_details_kii_create_uploader_failed">创建上传操作失败</string>
+    <string name="text_review_details_kii_file_does_not_exist">文件不存在</string>
+    <string name="text_review_details_kii_files_in_cloud">云端文件:</string>
+    <string name="text_review_details_kii_size">大小</string>
+    <string name="text_review_details_kii_downloading_files">下载文件:</string>
+    <string name="text_review_details_kii_load_kiifile_failed">载入kii文件失败</string>
+    <string name="text_review_details_kii_load_downloader_failed">执行下载操作失败</string>
+    <string name="text_review_details_kii_download_failed">下载失败</string>
+    <string name="text_review_details_kii_default_title">默认的</string>
+    <string name="text_review_details_kii_add_downloader_failed">新增下载操作失败</string>
+    <string name="text_review_details_kii_ask_play">播放这个文件吗？</string>
+
+</resources>

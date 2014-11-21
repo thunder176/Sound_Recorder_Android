@@ -20,6 +20,9 @@ public class FragmentCapture extends Fragment {
 	 */
 	private static FragmentCapture instance_CaptureFragment = null;
 
+	// Fragment status
+	private boolean mbl_isFragmentCaptureDisplay = false;
+
 	private ImageButton mbtn_capture = null;
 	private TextView mtv_captureStatus = null;
 
@@ -98,6 +101,7 @@ public class FragmentCapture extends Fragment {
 
 	public void stopRecordingInCaptureFragment() {
 		MediaCapture.getInstance().stopRecording();
+		FragmentReview.getInstance().addRecordingInfo();
 		mbtn_capture.setImageResource(R.drawable.capture_start);
 		mtv_captureStatus.setText("");
 		mTimer.stop();
@@ -107,6 +111,10 @@ public class FragmentCapture extends Fragment {
 
 	public boolean isRecordingNow() {
 		return mbl_isRecording;
+	}
+
+	public boolean isFragmentCaptureDisplay() {
+		return mbl_isFragmentCaptureDisplay;
 	}
 
 	@Override
@@ -137,6 +145,7 @@ public class FragmentCapture extends Fragment {
 	@Override
 	public void onStart() {
 		Log.e("Fragment_lifecircle_testing", "CaptureFragment_onStart");
+		mbl_isFragmentCaptureDisplay = true;
 		super.onStart();
 	}
 
@@ -149,6 +158,7 @@ public class FragmentCapture extends Fragment {
 	@Override
 	public void onStop() {
 		Log.e("Fragment_lifecircle_testing", "CaptureFragment_onStop");
+		mbl_isFragmentCaptureDisplay = false;
 		super.onStop();
 	}
 

@@ -1,14 +1,20 @@
 package edu.bjtu.group1.SoundRecorder;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+
+import edu.bjtu.group1.SoundRecorder.FragmentReviewDetailsLogin.DownloaderObj;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -26,6 +32,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AbsListView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -41,6 +48,11 @@ public class FragmentReview extends Fragment {
 	 */
 	private static FragmentReview instance_ReviewFragment = null;
 
+	// Fragment status
+	private boolean mbl_isFragmentReviewDisplay = false;
+	private boolean mbl_isDataPrepared = false;
+	private boolean mbl_isDataPrepareTaskDoing = false;
+
 	// UI components
 	private SearchView msv_review = null;
 	private ListView mlv_review = null;
@@ -48,9 +60,15 @@ public class FragmentReview extends Fragment {
 	// ListView Data
 	private ArrayList<HashMap<String, Object>> mArrayList = null;
 	private String mFilterConstraint = "";
+	private ArrayList<HashMap<String, Object>> mSearchedArrayList = null;
+	private final int LISTVIEW_CACHE_INIT_ITEMS = 20;
+	private final int LISTVIEW_CACHE_ADD_ITEMS = 10;
+	private int mi_lvCacheCurrentSumItemsNum = 0;
+	private boolean mbl_isCacheNumChanged = false;
+	private ArrayList<HashMap<String, Object>> mCacheArrayList = null;
 
 	// Record file name
-	private String mstr_fileName = null;
+	private String mstr_oldFileName = null;
 
 	public FragmentReview() {
 	}
@@ -94,6 +112,8 @@ public class FragmentReview extends Fragment {
 					// Log.e("ReviewFragment::onQueryTextChange",
 					// "mlv_review.clearTextFilter()");
 					mFilterConstraint = "";
+					mi_lvCacheCurrentSumItemsNum = LISTVIEW_CACHE_INIT_ITEMS;
+					mbl_isCacheNumChanged = false;
 					updateListView();
 					// mlv_review.clearTextFilter();
 				} else {
@@ -139,45 +159,56 @@ public class FragmentReview extends Fragment {
 		// });
 
 		// ListView advanced UI
-		// 生成动态数组，加入数据
-		if (null != mArrayList) {
-			mArrayList.clear();
-		}
-		mArrayList = new ArrayList<HashMap<String, Object>>();
-		String[] recorderFiles = SaveOrLoadFileHelper.getInstance()
-				.loadRecorderFiles();
-		for (int i = 0; i < recorderFiles.length; i++) {
-			HashMap<String, Object> map = new HashMap<String, Object>();
-			map.put("listview_item_title", recorderFiles[i]);
-			map.put("listview_item_image", R.drawable.review_recording_play);// 图像资源的ID
-			map.put("listview_item_duration", MediaReview.getInstance()
-					.getDurationByFileName(recorderFiles[i]));
-			mArrayList.add(map);
-		}
+		// now it's done in prepareData();
 
+		mi_lvCacheCurrentSumItemsNum = LISTVIEW_CACHE_INIT_ITEMS;
+		mbl_isCacheNumChanged = false;
 		updateListView();
 	}
 
 	private void updateListView() {
+		if (!mbl_isDataPrepared) {
+			List<String> data = new ArrayList<String>();
+			data.add("Data is preparing, please come back later!");
+			mlv_review.setAdapter(new ArrayAdapter<String>(getActivity(),
+					android.R.layout.simple_expandable_list_item_1, data));
+			data = null;
+			return;
+		}
 		if (null == mArrayList) {
 			return;
 		}
-		ArrayList<HashMap<String, Object>> newArrayList;
+
+		// Search the string of mFilterConstraint
 		if (mFilterConstraint.equals("")) {
-			newArrayList = mArrayList;
+			mSearchedArrayList = mArrayList;
 		} else {
-			newArrayList = new ArrayList<HashMap<String, Object>>();
+			if (null != mSearchedArrayList) {
+				mSearchedArrayList = null;
+			}
+			mSearchedArrayList = new ArrayList<HashMap<String, Object>>();
 			for (HashMap<String, Object> hsmap : mArrayList) {
 				if (((String) hsmap.get("listview_item_title"))
 						.contains(mFilterConstraint)) {
-					newArrayList.add(hsmap);
+					mSearchedArrayList.add(hsmap);
 				}
 			}
 		}
 
+		// Cache items as setting
+		// TODO load data from SharedPreferences
+		if (null != mCacheArrayList) {
+			mCacheArrayList = null;
+		}
+		mCacheArrayList = new ArrayList<HashMap<String, Object>>();
+		for (int i = 0; i < mi_lvCacheCurrentSumItemsNum
+				&& i < mSearchedArrayList.size(); i++) {
+			mCacheArrayList.add(mSearchedArrayList.get(i));
+		}
+
 		// 生成适配器的Item和动态数组对应的元素
 		ReviewSimpleAdapter listItemAdapter = new ReviewSimpleAdapter(
-				getActivity(), newArrayList, // 数据源
+				getActivity(), mCacheArrayList, // 数据源
 				R.layout.listview_review_items,// ListItem的XML实现
 				// 动态数组与ImageItem对应的子项
 				new String[] { "listview_item_title", "listview_item_image",
@@ -188,6 +219,12 @@ public class FragmentReview extends Fragment {
 
 		// show the items
 		mlv_review.setAdapter(listItemAdapter);
+
+		if (mbl_isCacheNumChanged) {
+			mlv_review.setSelection(mi_lvCacheCurrentSumItemsNum
+					- 2 * LISTVIEW_CACHE_ADD_ITEMS);
+			listItemAdapter.notifyDataSetInvalidated();
+		}
 
 		// add click Listener
 		mlv_review.setOnItemClickListener(new OnItemClickListener() {
@@ -201,12 +238,14 @@ public class FragmentReview extends Fragment {
 				String strFileName = (String) hmItem.get("listview_item_title");
 
 				// show review detail fragment
-				FragmentReviewDetails.getInstance().setRecordName(strFileName);
+				FragmentReviewDetailsUnlogin.getInstance().setRecordName(
+						strFileName);
 				FragmentManager fragmentManager = getFragmentManager();
 				fragmentManager
 						.beginTransaction()
 						.replace(R.id.container,
-								FragmentReviewDetails.getInstance()).commit();
+								FragmentReviewDetailsUnlogin.getInstance())
+						.commit();
 				// Toast.makeText(getActivity(), strFileName,
 				// Toast.LENGTH_SHORT)
 				// .show();
@@ -240,13 +279,21 @@ public class FragmentReview extends Fragment {
 
 			public void onScrollStateChanged(AbsListView view, int scrollState) {
 				hideSoftInput();
+				mbl_isCacheNumChanged = false;
+				if (scrollState == OnScrollListener.SCROLL_STATE_IDLE) {
+					if (view.getLastVisiblePosition() == view.getCount() - 1) {
+						if (mSearchedArrayList.size() > mCacheArrayList.size()) {
+							mi_lvCacheCurrentSumItemsNum += LISTVIEW_CACHE_ADD_ITEMS;
+							mbl_isCacheNumChanged = true;
+							updateListView();
+						}
+					}
+				}
 
 			}
 
 			public void onScroll(AbsListView view, int firstVisibleItem,
 					int visibleItemCount, int totalItemCount) {
-				// TODO Auto-generated method stub
-
 			}
 		});
 	}
@@ -257,7 +304,7 @@ public class FragmentReview extends Fragment {
 
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
 				.getMenuInfo();
-		mstr_fileName = mArrayList.get(info.position)
+		mstr_oldFileName = mArrayList.get(info.position)
 				.get("listview_item_title").toString();
 		// Log.e("ReviewFragment::onContextItemSelected", strFileName);
 
@@ -288,8 +335,8 @@ public class FragmentReview extends Fragment {
 										Toast.LENGTH_SHORT).show();
 							} else {
 								int result = MediaReview.getInstance()
-										.renameRecordByFileName(mstr_fileName,
-												strNewName);
+										.renameRecordByFileName(
+												mstr_oldFileName, strNewName);
 								if (1 == result) {
 									Toast.makeText(
 											getActivity(),
@@ -318,7 +365,16 @@ public class FragmentReview extends Fragment {
 													.getString(
 															R.string.review_rename_result_success),
 											Toast.LENGTH_SHORT).show();
-									initListView();
+									if (null != mArrayList) {
+										for (HashMap<String, Object> hp : mArrayList) {
+											if (hp.get("listview_item_title")
+													.equals(mstr_oldFileName)) {
+												hp.put("listview_item_title",
+														strNewName);
+											}
+										}
+									}
+									updateListView();
 								}
 							}
 							return;
@@ -337,12 +393,15 @@ public class FragmentReview extends Fragment {
 
 		} else if (1 == item.getItemId()) {
 			// Do delete operation
-			if (MediaReview.getInstance().deleteRecordByFileName(mstr_fileName)) {
+			MediaReview.getInstance().stopPlay();
+			if (MediaReview.getInstance().deleteRecordByFileName(
+					mstr_oldFileName)) {
 				if (null != mArrayList) {
-					Iterator<HashMap<String, Object>> it = mArrayList.iterator();
+					Iterator<HashMap<String, Object>> it = mArrayList
+							.iterator();
 					while (it.hasNext()) {
 						if (((String) it.next().get("listview_item_title"))
-								.equals(mstr_fileName)) {
+								.equals(mstr_oldFileName)) {
 							it.remove();
 						}
 					}
@@ -351,6 +410,10 @@ public class FragmentReview extends Fragment {
 			}
 		}
 		return super.onContextItemSelected(item);
+	}
+
+	public boolean isFragmentReviewDisplay() {
+		return mbl_isFragmentReviewDisplay;
 	}
 
 	@Override
@@ -362,6 +425,7 @@ public class FragmentReview extends Fragment {
 	@Override
 	public void onStart() {
 		Log.e("Fragment_lifecircle_testing", "ReviewFragment_onStart");
+		mbl_isFragmentReviewDisplay = true;
 		// fix a bug to display mFilterConstraint correctly
 		if (!mFilterConstraint.equals("")) {
 			msv_review.setQuery(mFilterConstraint, false);
@@ -378,14 +442,16 @@ public class FragmentReview extends Fragment {
 	@Override
 	public void onStop() {
 		Log.e("Fragment_lifecircle_testing", "ReviewFragment_onStop");
+		mbl_isFragmentReviewDisplay = false;
 		MediaReview.getInstance().stopPlay();
 		hideSoftInput();
 		super.onStop();
 	}
-	
+
 	@Override
 	public void onDestroy() {
 		Log.e("Fragment_lifecircle_testing", "ReviewFragment_onDestroy");
+		mFilterConstraint = "";
 		super.onDestroy();
 	}
 
@@ -396,6 +462,93 @@ public class FragmentReview extends Fragment {
 					.getSystemService(Context.INPUT_METHOD_SERVICE);
 			inputmanger.hideSoftInputFromWindow(view.getWindowToken(), 0);
 		}
+	}
+
+	public String millisToString(int iDuration) {
+		int hours = (iDuration % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60);
+		int minutes = (iDuration % (1000 * 60 * 60)) / (1000 * 60);
+		int seconds = (iDuration % (1000 * 60)) / 1000;
+		String strDuration = hours + ":" + minutes + ":" + seconds;
+		return strDuration;
+	}
+
+	public void prepareData() {
+		if (!mbl_isDataPrepareTaskDoing && !mbl_isDataPrepared) {
+			Log.e("FragmentReview::prepareData", "new prepareDataTask()");
+			prepareDataTask asyncTask = new prepareDataTask();
+			asyncTask.execute();
+		}
+	}
+
+	void reverseArray(String[] str) {
+		int i = 0, n = str.length - 1;
+		while (n > 2 * i) {
+			String temp = str[i];
+			str[i] = str[n - i];
+			str[n - i] = temp;
+			i++;
+		}
+	}
+
+	private class prepareDataTask extends
+			AsyncTask<DownloaderObj, String, String> {
+
+		@Override
+		protected String doInBackground(DownloaderObj... params) {
+			mbl_isDataPrepareTaskDoing = true;
+			if (null != mArrayList) {
+				mArrayList.clear();
+			}
+			mArrayList = new ArrayList<HashMap<String, Object>>();
+			String[] recorderFiles = SaveOrLoadFileHelper.getInstance()
+					.loadRecorderFiles();
+			// sort by last Modified time
+			Arrays.sort(recorderFiles, new Comparator<Object>() {
+				public int compare(Object a, Object b) {
+					String s1 = (String) a;
+					String s2 = (String) b;
+					return SaveOrLoadFileHelper
+							.getInstance()
+							.getLastModifiedTime(s1)
+							.compareTo(
+									SaveOrLoadFileHelper.getInstance()
+											.getLastModifiedTime(s2));
+				}
+			});
+			// reverse
+			reverseArray(recorderFiles);
+
+			for (int i = 0; i < recorderFiles.length; i++) {
+				HashMap<String, Object> map = new HashMap<String, Object>();
+				map.put("listview_item_title", recorderFiles[i]);
+				map.put("listview_item_image", R.drawable.review_recording_play);// 图像资源的ID
+				map.put("listview_item_duration", millisToString(MediaReview
+						.getInstance()
+						.getRecordDurationMillis(recorderFiles[i])));
+				mArrayList.add(map);
+			}
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			mbl_isDataPrepared = true;
+			mbl_isDataPrepareTaskDoing = false;
+			super.onPostExecute(result);
+		}
+	}
+
+	public void addRecordingInfo() {
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("listview_item_title", MediaCapture.getInstance()
+				.getLastRecordFileName());
+		map.put("listview_item_image", R.drawable.review_recording_play);// 图像资源的ID
+		map.put("listview_item_duration",
+				millisToString(MediaReview.getInstance()
+						.getRecordDurationMillis(
+								MediaCapture.getInstance()
+										.getLastRecordFileName())));
+		mArrayList.add(0, map);
 	}
 
 }

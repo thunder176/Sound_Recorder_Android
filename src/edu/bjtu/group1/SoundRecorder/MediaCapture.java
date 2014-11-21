@@ -15,8 +15,10 @@ public class MediaCapture {
 
 	private static MediaRecorder mRecorder = null;
 
+	private String mstr_lastRecordFileName = null;
+
 	private long ml_captureTime = 0;
-	
+
 	private MediaCapture() {
 	}
 
@@ -47,6 +49,7 @@ public class MediaCapture {
 		SimpleDateFormat sDateFormat = new SimpleDateFormat(
 				"yyyy-MM-dd hh_mm_ss");
 		String date = sDateFormat.format(new java.util.Date());
+		mstr_lastRecordFileName = date + ".amr";
 		mRecorder.setOutputFile(SaveOrLoadFileHelper.getInstance()
 				.getRecordStorageDir() + File.separator + date + ".amr");
 
@@ -73,13 +76,17 @@ public class MediaCapture {
 		return 0;
 	}
 
+	public String getLastRecordFileName() {
+		return mstr_lastRecordFileName;
+	}
+
 	public void stopRecording() {
 		ml_captureTime = 0;
 		mRecorder.stop();
 		mRecorder.release();
 		mRecorder = null;
 	}
-	
+
 	public long getCaptureTime() {
 		return ml_captureTime;
 	}

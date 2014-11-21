@@ -12,8 +12,9 @@
     <string name="action_tutorial">Tutorial</string>
     <string name="action_capture">  CAPTURE  </string>
     <string name="action_review">  REVIEW  </string>
+    <string name="action_logout">  LOGOUT  </string>
     <string name="capture_intro_message">
-		<![CDATA[
+<![CDATA[
         
             Capture & review the important moments
             of conversations, meetings and lectures
@@ -35,11 +36,45 @@
     <string name="review_rename_result_file_exist">The name has been already uesd.</string>
     <string name="review_rename_result_same_name">You cannot input a same name.</string>
     <string name="review_rename_result_success">Rename success</string>
-    <string name="button_review_details_share">Share</string>
-    <string name="button_review_details_Upload">Upload</string>
+    <string name="button_review_details_label">Label</string>
+    <string name="button_review_details_upload">Upload</string>
     <string name="button_review_details_play">Play</string>
     <string name="button_review_details_stop">Stop</string>
     <string name="button_review_details_pause">pause</string>
+    <string name="button_review_details_login">Login</string>
+    <string name="button_review_details_Register">Register and Login</string>
     <string name="text_review_details_sample">2014_11_14 00_00_00</string>
+    <string name="text_review_details_username">Username</string>
+    <string name="text_review_details_pwd">Password</string>
+    <string name="text_review_details_tips">Please login to backup on cloud:</string>
+    <string name="text_review_details_kii_title">Title</string>
+    <string name="text_review_details_kii_status">Status:</string>
+    <string name="text_review_details_kii_suspended">Suspended</string>
+    <string name="text_review_details_kii_error">Error</string>
+    <string name="text_review_details_kii_downloading">Downloading</string>
+    <string name="text_review_details_kii_finished">Finished</string>
+    <string name="text_review_details_kii_uploading">Uploading</string>
+    <string name="text_review_details_kii_ask_resume">Would you like to resume it?</string>
+    <string name="text_review_details_kii_ask_suspend">Would you like to suspend it?</string>
+    <string name="text_review_details_kii_ask_download">Would you like to download it?</string>
+    <string name="text_review_details_kii_ask_delete">Would you like to delete it?</string>
+    <string name="text_review_details_kii_common_yes">Yes</string>
+    <string name="text_review_details_kii_common_no">No</string>
+    <string name="text_review_details_kii_suspend_failed">Suspend failed</string>
+    <string name="text_review_details_kii_delete_failed">Delete failed</string>
+    <string name="text_review_details_kii_in_progressing">In progressing…</string>
+    <string name="text_review_details_kii_delete_uploader_failed">Delete uploader failed</string>
+    <string name="text_review_details_kii_load_uploaders_failed">Load uploaders failed</string>
+    <string name="text_review_details_kii_create_uploader_failed">Create uploader failed</string>
+    <string name="text_review_details_kii_file_does_not_exist">File does not exist</string>
+    <string name="text_review_details_kii_files_in_cloud">Files in cloud:</string>
+    <string name="text_review_details_kii_size">Size</string>
+    <string name="text_review_details_kii_downloading_files">Downloading files:</string>
+    <string name="text_review_details_kii_load_kiifile_failed">Load KiiFile failed</string>
+    <string name="text_review_details_kii_load_downloader_failed">Load downloader failed</string>
+    <string name="text_review_details_kii_download_failed">Download failed</string>
+    <string name="text_review_details_kii_default_title">default</string>
+    <string name="text_review_details_kii_add_downloader_failed">Add downloader failed</string>
+    <string name="text_review_details_kii_ask_play">Would you like to play it?</string>
 
 </resources>

@@ -1,5 +1,9 @@
 package edu.bjtu.group1.SoundRecorder;
 
+import com.kii.cloud.storage.Kii;
+import com.kii.cloud.storage.KiiUser;
+import com.kii.cloud.storage.callback.KiiUserCallBack;
+
 import android.app.Activity;
 
 import android.app.ActionBar;
@@ -34,15 +38,53 @@ public class MainActivity extends Activity implements
 	// show notification if press home when capturing
 	BackgroundLogo bgLogo = null;
 
+	// Define symbol for fragment
+	private final int FRAGMENT_CAPTURE_DISAPLAY = 1;
+	private final int FRAGMENT_REVIEW_DISAPLAY = 2;
+	private final int FRAGMENT_REVIEW_DETAILS_UNLOGIN_DISAPLAY = 3;
+	private final int FRAGMENT_REVIEW_DETAILS_LOGIN_DISAPLAY = 4;
+	private static int mi_currentDisplayFragment = 0;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		Log.e("Activity_lifecircle_testing", "MainActivity_onCreate");
 		super.onCreate(savedInstanceState);
+
+		// Kii Cloud initialize
+		Kii.initialize("62d45ebe", "63838d6bb158eab79ccf7f0470946648",
+				Kii.Site.CN);
+		// kii cloud sigh in with token
+		String token = SaveOrLoadFileHelper.getInstance().getToken(
+				getApplicationContext());
+		if (token.equals("")) {
+			// token is not exist
+			FragmentReviewDetailsUnlogin.getInstance().setIsKiiLogin(false);
+		} else {
+			// Use the access token to sign-in again
+			KiiUser.loginWithToken(new KiiUserCallBack() {
+				@Override
+				public void onLoginCompleted(int token, KiiUser user,
+						Exception exception) {
+					if (exception != null) {
+						// Error handling
+						return;
+					} else {
+						FragmentReviewDetailsUnlogin.getInstance()
+								.setIsKiiLogin(true);
+					}
+				}
+			}, token);
+		}
+
 		setContentView(R.layout.activity_main);
 		getActionBar().setDisplayShowTitleEnabled(false);
 		getActionBar().setDisplayShowHomeEnabled(true);
 
+		// show Logo when capturing in the background
 		bgLogo = new BackgroundLogo(this);
+
+		// prepare data in review fragment
+		FragmentReview.getInstance().prepareData();
 
 		mNavigationDrawerFragment = (FragmentNavigationDrawer) getFragmentManager()
 				.findFragmentById(R.id.navigation_drawer);
@@ -52,6 +94,7 @@ public class MainActivity extends Activity implements
 		mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
 				(DrawerLayout) findViewById(R.id.drawer_layout));
 
+		mi_currentDisplayFragment = 0;
 		// capture fragment
 		FragmentManager fragmentManager = getFragmentManager();
 		fragmentManager.beginTransaction()
@@ -62,6 +105,40 @@ public class MainActivity extends Activity implements
 	@Override
 	protected void onResume() {
 		Log.e("Activity_lifecircle_testing", "MainActivity_onResume");
+		// capture fragment or last fragment
+		Log.e("Change_of_orientation", "onCreate:mi_currentDisplayFragment = "
+				+ mi_currentDisplayFragment);
+		if (FRAGMENT_REVIEW_DISAPLAY == mi_currentDisplayFragment) {
+			Log.e("Change_of_orientation", "onCreate:FragmentReview");
+			FragmentManager fragmentManager = getFragmentManager();
+			fragmentManager.beginTransaction()
+					.replace(R.id.container, FragmentReview.getInstance())
+					.commit();
+		} else if (FRAGMENT_REVIEW_DETAILS_UNLOGIN_DISAPLAY == mi_currentDisplayFragment) {
+			Log.e("Change_of_orientation",
+					"onCreate:FragmentReviewDetailsUnlogin");
+			FragmentManager fragmentManager = getFragmentManager();
+			fragmentManager
+					.beginTransaction()
+					.replace(R.id.container,
+							FragmentReviewDetailsUnlogin.getInstance())
+					.commit();
+		} else if (FRAGMENT_REVIEW_DETAILS_LOGIN_DISAPLAY == mi_currentDisplayFragment) {
+			Log.e("Change_of_orientation",
+					"onCreate:FragmentReviewDetailsLogin");
+			FragmentManager fragmentManager = getFragmentManager();
+			fragmentManager
+					.beginTransaction()
+					.replace(R.id.container,
+							FragmentReviewDetailsLogin.getInstance()).commit();
+		} else if (FRAGMENT_CAPTURE_DISAPLAY == mi_currentDisplayFragment) {
+			Log.e("Change_of_orientation", "onCreate:FragmentCapture");
+			FragmentManager fragmentManager = getFragmentManager();
+			fragmentManager.beginTransaction()
+					.replace(R.id.container, FragmentCapture.getInstance())
+					.commit();
+		}
+		bgLogo.cancelNotification();
 		super.onResume();
 	}
 
@@ -75,7 +152,6 @@ public class MainActivity extends Activity implements
 	protected void onRestart() {
 		Log.e("Activity_lifecircle_testing", "MainActivity_onRestart");
 		super.onRestart();
-		bgLogo.cancelNotification();
 	}
 
 	@Override
@@ -94,6 +170,79 @@ public class MainActivity extends Activity implements
 	protected void onDestroy() {
 		Log.e("Activity_lifecircle_testing", "MainActivity_onDestroy");
 		super.onDestroy();
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		Log.e("Change_of_orientation", "MainActivity_onSaveInstanceState");
+		super.onSaveInstanceState(outState);
+		Kii.onSaveInstanceState(outState);
+		// adapt to the change of orientation
+		if (FragmentCapture.getInstance().isFragmentCaptureDisplay()) {
+			Log.e("Change_of_orientation",
+					"onSaveInstanceState:FragmentCapture");
+			outState.putInt("LastFragment", FRAGMENT_CAPTURE_DISAPLAY);
+			// mi_currentDisplayFragment = FRAGMENT_CAPTURE_DISAPLAY;
+		} else if (FragmentReview.getInstance().isFragmentReviewDisplay()) {
+			Log.e("Change_of_orientation", "onSaveInstanceState:FragmentReview");
+			outState.putInt("LastFragment", FRAGMENT_REVIEW_DISAPLAY);
+			// mi_currentDisplayFragment = FRAGMENT_REVIEW_DISAPLAY;
+		} else if (FragmentReviewDetailsUnlogin.getInstance()
+				.isFragmentReviewDetailsUnloginDisplay()) {
+			Log.e("Change_of_orientation",
+					"onSaveInstanceState:FragmentReviewDetails");
+			outState.putInt("LastFragment",
+					FRAGMENT_REVIEW_DETAILS_UNLOGIN_DISAPLAY);
+			// mi_currentDisplayFragment =
+			// FRAGMENT_REVIEW_DETAILS_UNLOGIN_DISAPLAY;
+		} else if (FragmentReviewDetailsUnlogin.getInstance()
+				.isFragmentReviewDetailsUnloginDisplay()) {
+			Log.e("Change_of_orientation",
+					"onSaveInstanceState:FragmentReviewDetails");
+			outState.putInt("LastFragment",
+					FRAGMENT_REVIEW_DETAILS_LOGIN_DISAPLAY);
+			// mi_currentDisplayFragment =
+			// FRAGMENT_REVIEW_DETAILS_LOGIN_DISAPLAY;
+		}
+	}
+
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		mi_currentDisplayFragment = savedInstanceState.getInt("LastFragment");
+		Log.e("Change_of_orientation",
+				"onRestoreInstanceState:mi_currentDisplayFragment = "
+						+ mi_currentDisplayFragment);
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) { // 返回键
+			if (FragmentReviewDetailsUnlogin.getInstance()
+					.isFragmentReviewDetailsUnloginDisplay()) {
+				FragmentReviewDetailsUnlogin.getInstance().onKeyDown(keyCode,
+						event);
+				return true;
+			} else if (FragmentReviewDetailsLogin.getInstance()
+					.isFragmentReviewDetailsLoginDisplay()) {
+				FragmentReviewDetailsLogin.getInstance().onKeyDown(keyCode,
+						event);
+				return true;
+			}
+			if (FragmentCapture.getInstance().isRecordingNow()) {
+				bgLogo.showNotification(getString(R.string.capture_tips_background));
+			}
+		}
+		return super.onKeyDown(keyCode, event);
+	}
+
+	@Override
+	// deal with home button pressed
+	protected void onUserLeaveHint() {
+		if (FragmentCapture.getInstance().isRecordingNow()) {
+			bgLogo.showNotification(getString(R.string.capture_tips_background));
+		}
+		super.onUserLeaveHint();
 	}
 
 	public void onNavigationDrawerItemSelected(int position) {
@@ -176,68 +325,44 @@ public class MainActivity extends Activity implements
 		return super.onOptionsItemSelected(item);
 	}
 
-	/**
-	 * A placeholder fragment containing a simple view.
-	 */
-	public static class PlaceholderFragment extends Fragment {
-		/**
-		 * The fragment argument representing the section number for this
-		 * fragment.
-		 */
-		private static final String ARG_SECTION_NUMBER = "section_number";
-
-		/**
-		 * Returns a new instance of this fragment for the given section number.
-		 */
-		public static PlaceholderFragment newInstance(int sectionNumber) {
-			PlaceholderFragment fragment = new PlaceholderFragment();
-			Bundle args = new Bundle();
-			args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-			fragment.setArguments(args);
-			return fragment;
-		}
-
-		public PlaceholderFragment() {
-		}
-
-		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container,
-				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_main, container,
-					false);
-			return rootView;
-		}
-
-		@Override
-		public void onAttach(Activity activity) {
-			super.onAttach(activity);
-			((MainActivity) activity).onSectionAttached(getArguments().getInt(
-					ARG_SECTION_NUMBER));
-		}
-	}
-
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK) { // 返回键
-			if (FragmentReviewDetails.getInstance()
-					.isFragmentReviewDetailsDisplay()) {
-				FragmentReviewDetails.getInstance().onKeyDown(keyCode, event);
-				return true;
-			}
-			if (FragmentCapture.getInstance().isRecordingNow()) {
-				return true;
-			}
-		}
-		return super.onKeyDown(keyCode, event);
-	}
-
-	@Override
-	// deal with home button pressed
-	protected void onUserLeaveHint() {
-		if (FragmentCapture.getInstance().isRecordingNow()) {
-			bgLogo.showNotification(getString(R.string.capture_tips_background));
-		}
-		super.onUserLeaveHint();
-	}
+	// /**
+	// * A placeholder fragment containing a simple view.
+	// */
+	// public static class PlaceholderFragment extends Fragment {
+	// /**
+	// * The fragment argument representing the section number for this
+	// * fragment.
+	// */
+	// private static final String ARG_SECTION_NUMBER = "section_number";
+	//
+	// /**
+	// * Returns a new instance of this fragment for the given section number.
+	// */
+	// public static PlaceholderFragment newInstance(int sectionNumber) {
+	// PlaceholderFragment fragment = new PlaceholderFragment();
+	// Bundle args = new Bundle();
+	// args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+	// fragment.setArguments(args);
+	// return fragment;
+	// }
+	//
+	// public PlaceholderFragment() {
+	// }
+	//
+	// @Override
+	// public View onCreateView(LayoutInflater inflater, ViewGroup container,
+	// Bundle savedInstanceState) {
+	// View rootView = inflater.inflate(R.layout.fragment_main, container,
+	// false);
+	// return rootView;
+	// }
+	//
+	// @Override
+	// public void onAttach(Activity activity) {
+	// super.onAttach(activity);
+	// ((MainActivity) activity).onSectionAttached(getArguments().getInt(
+	// ARG_SECTION_NUMBER));
+	// }
+	// }
 
 }

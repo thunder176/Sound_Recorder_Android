@@ -205,6 +205,7 @@ public class FragmentNavigationDrawer extends Fragment {
 		});
 
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
+		mDrawerLayout.closeDrawer(mFragmentContainerView);
 	}
 
 	private void selectItem(int position) {
